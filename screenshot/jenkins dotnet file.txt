@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    stages {
+        stage('checkout') {
+            steps {
+                ws('D:\\calculator') {
+                    git branch: 'dev/calculator', credentialsId: 'efdcf100-9332-4953-85e0-999e94d6dc35', url: 'https://github.com/RajNThakkar/calculator_dotnet.git'
+                }
+            }
+        }
+        stage('build') {
+            steps {
+                bat 'dotnet publish -c Release "D:\\calculator\\calculator\\calculator.sln"'
+            }
+        }
+        stage('Sonar Scan') {
+            steps {
+                ws('D:\\calculator\\calculator') {
+				script {
+                    def scannerHome = tool 'SonarScanner'
+                    withSonarQubeEnv('My SonarQube Server') {
+                        bat "dotnet ${scannerHome}\\SonarScanner.MSBuild.dll begin /k:\"Jenkins_Dotnet_project\""
+                        bat 'dotnet build "D:\\calculator\\calculator\\calculator.sln"'
+                        bat "dotnet ${scannerHome}\\SonarScanner.MSBuild.dll end"
+                    }
+					}
+                }
+            }
+        }
+		        stage('upload build artifacts') {
+		             
+            steps {
+                ws('D:\\calculator\\calculator\\calculator') {
+                archiveArtifacts artifacts: '**/bin/Debug/**/*.*', allowEmptyArchive: 'true'
+                 bat 'xcopy "D:\\calculator\\calculator\\calculator\\bin\\Debug\\net8.0" "D:\\hostingpath" /E /I'
+                }       
+            }
+        }
+        stage('Clean up checkout') {
+            steps {
+               bat 'rd /s /q  D:\\calculator & rd /s /q  D:\\calculator@tmp'
+            }
+        }
+    }
+}
