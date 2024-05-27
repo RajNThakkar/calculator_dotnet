@@ -1,4 +1,6 @@
-﻿double number1 = 0;
+﻿using calculator;
+
+double number1 = 0;
 double number2 = 0;
 int operation = -1;
 
@@ -25,19 +27,21 @@ while (!int.TryParse(Console.ReadLine(), out operation))
     Console.WriteLine("Please enter valid operation:");
 }
 
+CalculatorOperations calculatorOperations = new CalculatorOperations();
+
 switch (operation)
 {
     case 1:
         //Addition
-        Console.WriteLine($"Addition of {number1} and {number2} is {number1 + number2}");
+        Console.WriteLine($"Addition of {number1} and {number2} is {calculatorOperations.Addition(number1, number2)}");
         break;
     case 2:
         //Subtraction
-        Console.WriteLine($"Subtraction of {number1} and {number2} is {number1 - number2}");
+        Console.WriteLine($"Subtraction of {number1} and {number2} is {calculatorOperations.Subtraction(number1, number2)}");
         break;
     case 3:
         //Multiplication
-        Console.WriteLine($"Multiplication of {number1} and {number2} is {number1 * number2}");
+        Console.WriteLine($"Multiplication of {number1} and {number2} is {calculatorOperations.Multiplication(number1, number2)}");
         break;
     case 4:
         //Division
@@ -45,7 +49,7 @@ switch (operation)
         {
             Console.WriteLine("Cannot divide by zero");
         }
-        Console.WriteLine($"Division of {number1} and {number2} is {number1 / number2}");
+        Console.WriteLine($"Division of {number1} and {number2} is {calculatorOperations.Division(number1, number2)}");
         break;
     default:
         Console.WriteLine("Invalid operation");
